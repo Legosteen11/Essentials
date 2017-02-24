@@ -1,11 +1,13 @@
 package com.earth2me.essentials.signs;
 
 import com.earth2me.essentials.ChargeException;
+import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.Trade;
 import com.earth2me.essentials.User;
 import net.ess3.api.IEssentials;
 import net.ess3.api.MaxMoneyException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
@@ -18,6 +20,10 @@ public class SignBuy extends EssentialsSign {
 
     @Override
     protected boolean onSignCreate(final ISign sign, final User player, final String username, final IEssentials ess) throws SignException {
+        switch (sign.getLine(2)) {
+            case "iceskates":
+                return true;
+        }
         validateTrade(sign, 1, 2, player, ess);
         validateTrade(sign, 3, ess);
         return true;
@@ -25,8 +31,16 @@ public class SignBuy extends EssentialsSign {
 
     @Override
     protected boolean onSignInteract(final ISign sign, final User player, final String username, final IEssentials ess) throws SignException, ChargeException, MaxMoneyException {
-        Trade items = getTrade(sign, 1, 2, player, ess);
+        String itemName = sign.getLine(2);
         Trade charge = getTrade(sign, 3, ess);
+        switch(itemName) {
+            case "iceskates":
+                charge.isAffordableFor(player);
+                charge.charge(player);
+                Essentials.getPlugin(Essentials.class).getServer().dispatchCommand(Bukkit.getConsoleSender(), "giveiceskates " + player.getName());
+                break;
+        }
+        Trade items = getTrade(sign, 1, 2, player, ess);
 
         // Check if the player is trying to buy in bulk.
         if (ess.getSettings().isAllowBulkBuySell() && player.getBase().isSneaking()) {
