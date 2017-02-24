@@ -38,7 +38,7 @@ public class SignBuy extends EssentialsSign {
                 charge.isAffordableFor(player);
                 charge.charge(player);
                 Essentials.getPlugin(Essentials.class).getServer().dispatchCommand(Bukkit.getConsoleSender(), "giveiceskates " + player.getName());
-                break;
+                return true;
         }
         Trade items = getTrade(sign, 1, 2, player, ess);
 
